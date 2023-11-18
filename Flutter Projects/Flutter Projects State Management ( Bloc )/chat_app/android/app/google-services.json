@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "718849493650",
+    "project_id": "chat-app-4020f",
+    "storage_bucket": "chat-app-4020f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718849493650:android:89e5a043e542689f81f44b",
+        "android_client_info": {
+          "package_name": "com.example.chat_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiACgev7jUUzvQXNRwN-0JcQlD5z8sV8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718849493650:android:06b4265b4f8b1ec881f44b",
+        "android_client_info": {
+          "package_name": "com.example.scholar_chat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiACgev7jUUzvQXNRwN-0JcQlD5z8sV8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
