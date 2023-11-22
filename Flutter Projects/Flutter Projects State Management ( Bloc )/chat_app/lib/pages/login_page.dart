@@ -1,37 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:scholar_chat/Cubits/cubitChat/chat_cubit.dart';
+import 'package:scholar_chat/Cubits/cubitLogin/login_cubit_cubit.dart';
 import 'package:scholar_chat/constants.dart';
 import 'package:scholar_chat/helper/show_snack_bar.dart';
-import 'package:scholar_chat/pages/cubits/login_cubit/auth/auth_cubit.dart';
-import 'package:scholar_chat/pages/cubits/login_cubit/auth/auth_state.dart';
-import 'package:scholar_chat/pages/cubits/login_cubit/chatpage_cubit/chatpage_cubit.dart';
+import 'package:scholar_chat/pages/chat_page.dart';
 import 'package:scholar_chat/pages/resgister_page.dart';
 import 'package:scholar_chat/widgets/custom_button.dart';
 import 'package:scholar_chat/widgets/custom_text_field.dart';
 
-import 'chat_page.dart';
-
-class LoginPage extends StatelessWidget {
+class  LoginPage extends StatelessWidget {
   bool isLoading = false;
   static String id = 'login page';
-
   GlobalKey<FormState> formKey = GlobalKey();
-
   String? email, password;
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
+    return BlocListener<LoginCubit, LoginCubitState>(
       listener: (context, state) {
-        if (state is LoginLoading) {
-          isLoading = true;
-        } else if (state is LoginSuccess) {
-          BlocProvider.of<ChatPageCubit>(context).getMessage();
-          Navigator.pushNamed(context, ChatPage.id);
-          isLoading = false;
-        } else if (state is LoginFailure) {
-          showSnackBar(context, state.errmessage);
-        }
+         if(state is LoginCubitLoading){
+          isLoading =true;
+         }else if (state is LoginCubitSuccess){
+          BlocProvider.of<ChatCubit>(context).getMessage();
+            Navigator.pushNamed(context, ChatPage.id);
+           isLoading =false;
+         } else if (state is LoginCubitFailerd){
+          showSnackBar(context, state.errMessege);
+           isLoading =false;
+         }
       },
       child: ModalProgressHUD(
         inAsyncCall: isLoading,
@@ -43,14 +41,14 @@ class LoginPage extends StatelessWidget {
               key: formKey,
               child: ListView(
                 children: [
-                  SizedBox(
+                const  SizedBox(
                     height: 75,
                   ),
                   Image.asset(
                     'assets/images/scholar.png',
                     height: 100,
                   ),
-                  Row(
+                const  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
@@ -63,10 +61,10 @@ class LoginPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
+                const  SizedBox(
                     height: 75,
                   ),
-                  Row(
+                const  Row(
                     children: [
                       Text(
                         'LOGIN',
@@ -86,7 +84,7 @@ class LoginPage extends StatelessWidget {
                     },
                     hintText: 'Email',
                   ),
-                  SizedBox(
+                const  SizedBox(
                     height: 10,
                   ),
                   CustomFormTextField(
@@ -96,25 +94,25 @@ class LoginPage extends StatelessWidget {
                     },
                     hintText: 'Password',
                   ),
-                  SizedBox(
+                const  SizedBox(
                     height: 20,
                   ),
                   CustomButon(
                     onTap: () async {
                       if (formKey.currentState!.validate()) {
-                        BlocProvider.of<AuthCubit>(context)
-                            .loginUser(email: email!, password: password!);
+                        BlocProvider.of<LoginCubit>(context)
+                        .loginUser(email: email!, password: password!);
                       } else {}
                     },
                     text: 'LOGIN',
                   ),
-                  SizedBox(
+                const SizedBox(
                     height: 10,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                    const  Text(
                         'dont\'t have an account?',
                         style: TextStyle(
                           color: Colors.white,
@@ -124,7 +122,7 @@ class LoginPage extends StatelessWidget {
                         onTap: () {
                           Navigator.pushNamed(context, RegisterPage.id);
                         },
-                        child: Text(
+                        child:const Text(
                           '  Register',
                           style: TextStyle(
                             color: Color(0xffC7EDE6),
@@ -141,4 +139,7 @@ class LoginPage extends StatelessWidget {
       ),
     );
   }
+   Future<void> loginUser() async {
+    UserCredential user = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email!, password: password!);}
 }

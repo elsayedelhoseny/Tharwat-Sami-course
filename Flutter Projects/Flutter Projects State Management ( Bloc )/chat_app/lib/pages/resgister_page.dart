@@ -1,19 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:scholar_chat/Cubits/cubitRegister/cubit/register_cubit.dart';
+import 'package:scholar_chat/Cubits/cubitRegister/cubit/register_state.dart';
 import 'package:scholar_chat/constants.dart';
 import 'package:scholar_chat/helper/show_snack_bar.dart';
 import 'package:scholar_chat/pages/chat_page.dart';
-import 'package:scholar_chat/pages/cubits/login_cubit/auth/auth_cubit.dart';
-import 'package:scholar_chat/pages/cubits/login_cubit/auth/auth_state.dart';
 import 'package:scholar_chat/widgets/custom_button.dart';
 import 'package:scholar_chat/widgets/custom_text_field.dart';
 
 class RegisterPage extends StatelessWidget {
   String? email;
-
+static String id = 'RegisterPage';
   String? password;
-  static String id = 'RegisterPage';
 
   bool isLoading = false;
 
@@ -21,16 +21,17 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
+    return BlocConsumer<RegisterCubit, RegisterCubitState>(
       listener: (context, state) {
-        if (state is RegisterLoading) {
-          isLoading = true;
-        } else if (state is RegisterSuccess) {
-          Navigator.pushNamed(context, ChatPage.id);
-          isLoading = false;
-        } else if (state is RegisterFailure) {
-          showSnackBar(context, state.errmessage);
-        }
+         if(state is RegisterCubitLoading){
+          isLoading =true;
+         }else if (state is RegisterCubitSuccess){
+           Navigator.pushNamed(context, ChatPage.id);
+           isLoading =false;
+         } else if (state is RegisterCubitFailerd){
+          showSnackBar(context, state.errMessege);
+           isLoading =false;
+         }
       },
       builder: (context, state) {
         return ModalProgressHUD(
@@ -43,14 +44,14 @@ class RegisterPage extends StatelessWidget {
                 key: formKey,
                 child: ListView(
                   children: [
-                    SizedBox(
+                  const  SizedBox(
                       height: 75,
                     ),
                     Image.asset(
                       'assets/images/scholar.png',
                       height: 100,
                     ),
-                    Row(
+                  const  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
@@ -63,10 +64,10 @@ class RegisterPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
+                   const SizedBox(
                       height: 75,
                     ),
-                    Row(
+                  const  Row(
                       children: [
                         Text(
                           'REGISTER',
@@ -86,7 +87,7 @@ class RegisterPage extends StatelessWidget {
                       },
                       hintText: 'Email',
                     ),
-                    SizedBox(
+                  const  SizedBox(
                       height: 10,
                     ),
                     CustomFormTextField(
@@ -95,25 +96,25 @@ class RegisterPage extends StatelessWidget {
                       },
                       hintText: 'Password',
                     ),
-                    SizedBox(
+                  const  SizedBox(
                       height: 20,
                     ),
                     CustomButon(
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
-                          BlocProvider.of<AuthCubit>(context)
+                          BlocProvider.of<RegisterCubit>(context)
                               .registerUser(email: email!, password: password!);
                         } else {}
                       },
                       text: 'REGISTER',
                     ),
-                    SizedBox(
+                   const SizedBox(
                       height: 10,
                     ),
-                    Row(
+                      Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                       const Text(
                           'already have an account?',
                           style: TextStyle(
                             color: Colors.white,
@@ -123,7 +124,7 @@ class RegisterPage extends StatelessWidget {
                           onTap: () {
                             Navigator.pop(context);
                           },
-                          child: Text(
+                          child: const Text(
                             '  Login',
                             style: TextStyle(
                               color: Color(0xffC7EDE6),
@@ -140,5 +141,10 @@ class RegisterPage extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> registerUser() async {
+    UserCredential user = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email!, password: password!);
   }
 }
